@@ -1,27 +1,28 @@
 <?php
-// Include necessary files and configurations, including database connection
+// Підключення необхідних файлів та конфігурацій, включаючи з'єднання з базою даних
 include ($_SERVER["DOCUMENT_ROOT"] . "/config/connection_database.php");
 
+// Перевірка, чи відправлено POST-запит
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $categoryId = $_GET['id'];
-    $name = $_POST["name"];
-    $description = $_POST["description"];
-    $existingImage = $_POST["existing_image"];
-    $imageTmpName = $_FILES['image']['tmp_name'];
-    $dir = "/images/";
-    $image_name = $existingImage; // Use existing image name if no new image is uploaded
+    $categoryId = $_GET['id']; // Отримання ідентифікатора категорії з параметру URL
+    $name = $_POST["name"]; // Отримання значення з поля "name" з POST-запиту
+    $description = $_POST["description"]; // Отримання значення з поля "description" з POST-запиту
+    $existingImage = $_POST["existing_image"]; // Отримання імені існуючого зображення
+    $imageTmpName = $_FILES['image']['tmp_name']; // Тимчасова назва файлу при його передачі на сервер
+    $dir = "/images/"; // Директорія для збереження зображення
+    $image_name = $existingImage; // Використання існуючої назви зображення, якщо нове не завантажено
 
-    // Check if a new image is uploaded
+    // Перевірка, чи було завантажено нове зображення
     if (!empty($imageTmpName)) {
-        // Generate a new unique image name
+        // Генерація нової унікальної назви зображення
         $image_name = uniqid() . ".jpg";
-        // Set the destination path
+        // Встановлення шляху призначення для збереження файлу
         $destination = $_SERVER["DOCUMENT_ROOT"] . $dir . $image_name;
-        // Move the uploaded file to the destination
+        // Переміщення завантаженого файлу в папку призначення
         move_uploaded_file($imageTmpName, $destination);
     }
 
-    // Update the category data in the database
+    // Оновлення даних категорії в базі даних
     $sql = "UPDATE categories SET name = :name, image = :image, description = :description WHERE id = :id";
     $stmt = $pdo->prepare($sql);
     $stmt->bindParam(':name', $name);
@@ -29,15 +30,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt->bindParam(':description', $description);
     $stmt->bindParam(':id', $categoryId);
 
-    // Execute the statement
+    // Виконання запиту
     $stmt->execute();
 
-    header("Location: /"); // Redirect to the category list page
+    header("Location: /"); // Перенаправлення на сторінку списку категорій
     exit;
 }
 ?>
-
-
 
 <!doctype html>
 <html lang="en">
@@ -59,21 +58,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <?php
         include ($_SERVER["DOCUMENT_ROOT"] . "/config/connection_database.php");
 
+        // Перевірка, чи вказаний ідентифікатор категорії в параметрі URL
         if (isset($_GET['id'])) {
             $categoryId = $_GET['id'];
 
+            // Отримання даних категорії за ідентифікатором
             $stmt = $pdo->prepare("SELECT id, name, description, image FROM categories WHERE id = ?");
             $stmt->execute([$categoryId]);
             $category = $stmt->fetch(PDO::FETCH_ASSOC);
 
             if ($category) {
                 ?>
+                <!-- Форма для редагування категорії -->
                 <form class="offset-md-3 col-md-6" method="post" enctype="multipart/form-data" onsubmit="return validateEditForm()">
                     <div class="mb-3">
                         <label for="existing-image" class="form-label">Поточне фото</label>
                         <img id="existing-image" src="/images/<?php echo $category['image']; ?>" alt="Existing Image" style="max-width: 100%">
                     </div>
 
+                    <!-- Приховане поле для передачі імені існуючого зображення -->
                     <input type="hidden" name="existing_image" value="<?php echo $category['image']; ?>">
 
                     <div class="mb-3" id="selected-image-container">

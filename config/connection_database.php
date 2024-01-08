@@ -1,17 +1,18 @@
 <?php
-$host = 'localhost'; // Replace with your database host
-$dbname = 'local.spu111.com'; // Replace with your database name
-$user = 'root'; // Replace with your database username
-$pass = ''; // Replace with your database password
+$host = 'localhost'; //хост бази даних
+$dbname = 'local.spu111.com'; //  назва бази даних
+$user = 'root'; //  ім'я користувача бази даних
+$pass = ''; //пароль бази даних
 
 try {
-    // Creating a PDO instance
+    // Створення екземпляру PDO
     $pdo = new PDO("mysql:host=$host;dbname=$dbname", $user, $pass);
 
-    // Set the PDO error mode to exception
+    // Встановлення режиму обробки помилок для PDO в режим винятків
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
+    // Виведення повідомлення про успішне підключення
     //echo "<h3>Connected successfully</h3>";
 } catch (PDOException $e) {
+    // Виведення повідомлення про невдале підключення разом із текстом помилки
     echo "Connection failed: " . $e->getMessage();
 }

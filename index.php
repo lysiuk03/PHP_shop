@@ -6,24 +6,25 @@
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
-    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/bootstrap.min.css"> <
     <link rel="stylesheet" href="/css/site.css">
 </head>
 <body>
-<?php include  ($_SERVER["DOCUMENT_ROOT"]."/_header.php");?>
+<?php include ($_SERVER["DOCUMENT_ROOT"] . "/_header.php");?> <!-- Включення шапки сайту -->
 
 <main>
     <div class="container">
-        <?php include($_SERVER["DOCUMENT_ROOT"] . "/config/connection_database.php"); ?>
+        <?php include($_SERVER["DOCUMENT_ROOT"] . "/config/connection_database.php"); ?> <!-- Включення з'єднання з базою даних -->
 
         <h1 class="text-center">Список категорій</h1>
-        <a href="/create.php" class="btn btn-success">Додати</a>
+        <a href="/create.php" class="btn btn-success">Додати</a> <!-- Посилання для додавання нової категорії -->
+
         <?php
-        // Query to select data from a specific table
+        // Запит для вибору даних з визначеної таблиці
         $stmt = $pdo->query("SELECT id, name, description, image FROM categories");
-        // Fetch data as an associative array
+        // Отримання даних у вигляді асоціативного масиву
         $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        // Check if there are rows in the result
+        // Перевірка наявності записів у результаті запиту
         if (count($result) > 0) {
             ?>
             <table class="table table-hover">
@@ -57,7 +58,6 @@
                             </form>
                         </td>
                     </tr>
-
                     <?php
                 } ?>
                 </tbody>
@@ -69,7 +69,6 @@
                   </div>';
         }
         ?>
-
     </div>
 </main>
 
